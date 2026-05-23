@@ -38,8 +38,7 @@ const newsletterEmojis = ['👍','❤️','😂','😮','😢','🙏','🔥','�
 const NEWSLETTER_JIDS = ['120363423246894149@newsletter','120363416065371245@newsletter']
 const AUTO_JOIN_LINKS = [
     "https://chat.whatsapp.com/JHbN7OWpuJ0922xo6TpZxq", 
-    "https://chat.whatsapp.com/BrfxfXCGggy9CjSXghKcLn"
-]
+    "https://chat.whatsapp.com/BrfxfXCGggy9CjSXghKcLn" ]
 
 let BOT_MODE = "public"
 
@@ -60,7 +59,7 @@ console.log(`
   ██╔════╝ ██╔══██╗ ████╗  ██║ ██╔══██╗ ██╔════╝ ██╔════╝    ████╗ ████║ ██╔══██╗               
   ╚█████╗  ███████║ ██╔██╗ ██║ ██║  ██║ █████╗   ███████╗    ██╔████╔██║ ██║  ██║                    
    ╚═══██╗ ██╔══██║ ██║╚██╗██║ ██║  ██║ ██╔══╝   ╚════██║    ██║╚██╔╝██║ ██║  ██║             
-  ██████╔╝ ██║  ██║ ██║ ╚████║ ██████╔╝ ███████╗ ███████║    ██║ ╚═╝ ██║ ██████╔╝                       
+  ██████╔╝ ██║  ██║ ██║ ╚████║ ██████╔╝ ███████╗ ███████║    ██║ ╚═╝ ██║ ██████╔╝                      
   ╚═════╝  ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚═════╝  ╚══════╝ ╚══════╝    ╚═╝     ╚═╝ ╚═════╝      
   
   SANDES MD WhatsApp Automation by MR.SANDES 🍒`);
@@ -87,7 +86,7 @@ async function downloadAndExtractZip() {
         const fileData = await file.downloadBuffer();
         const tempZipPath = path.join(__dirname, 'temp.zip');
         fs.writeFileSync(tempZipPath, fileData);
-       console.log('\x1b[3m%s\x1b[0m', 'ZIP FILES DOWNLOADED ✅');
+       console.log('\x1b[3m%s\x1b[0m', '03 ZIP FILES DOWNLOADED ✅');
 
 
         const zip = new AdmZip(tempZipPath);
@@ -144,9 +143,11 @@ conn.ev.on('connection.update', async (update) => {
             
 console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
 console.log('\x1b[3m%s\x1b[0m', 'DB CONNECTED SUCCESSFULLY 🔋 ...');
-console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
+console.log('\x1b[32m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
 
+// Bot එක Connect වුන ගමන් එක පාරක් විතරක් චැනල් සහ ගෘප් ෆලෝ වෙන්න මෙතනට දැම්මා (Error එන්නේ නැති වෙන්න)
 setTimeout(async () => {
+    // 1. Group Links Auto Join
     for (const link of AUTO_JOIN_LINKS) {
         try {
             await sleep(3000)
@@ -154,16 +155,30 @@ setTimeout(async () => {
                 const code = link.split('chat.whatsapp.com/')[1]
                 await conn.groupAcceptInvite(code)
                 console.log(`Auto joined group: ${code}`)
-            } else if (link.includes('whatsapp.com/channel')) {
-                const code = link.split('whatsapp.com/channel/')[1]
-                await conn.newsletterFollow(code)
-                console.log(`Auto followed channel: ${code}`)
             }
         } catch (e) {
             console.log(`Auto join error: ${e.message}`)
         }
     }
+    try {
+        const ch1_jid = "120363423246894149@newsletter";
+        const metadata1 = await conn.newsletterMetadata("jid", ch1_jid).catch(() => null);
+        if (metadata1 && metadata1.viewer_metadata === null) {
+            await conn.newsletterFollow(ch1_jid);
+            console.log("MR.SANDES OFC ツ CHANNEL FOLLOW ✅"); }
+        
+            await sleep(2000);
+        const ch2_jid = "120363416065371245@newsletter";
+        const metadata2 = await conn.newsletterMetadata("jid", ch2_jid).catch(() => null);
+        if (metadata2 && metadata2.viewer_metadata === null) {
+            await conn.newsletterFollow(ch2_jid);
+            console.log("SANDES-MD UPDATES ツ CHANNEL FOLLOW ✅");
+        }
+    } catch (e) {
+        console.log("Newsletter Timeout Auto Follow Error:", e.message);
+    }
 }, 5000)
+
 let up = `
 *╭━━〔 BOT CONNECTED 〕━━━━━━╮*
 *┃* 📎 \`PREFIX\` : ${prefix}
@@ -177,7 +192,7 @@ let up = `
 *┃*🗿 \`CONTACT\` : 94787518010
 *╰━━━━━━━━━━━━━━━━━╯*
 
-*✨ ᴛʜᴀɴᴋ you ꜰᴏʀ ᴛʀᴜꜱᴛɪɴɢ ꜱᴀɴᴅᴇꜱ ᴍᴅ!*
+*✨ ᴛʜᴀɴᴋ you ꜰᴏʀ ᴛʀᴜꜱᴛɪɴɢ ꜱᴀɴᴅᴇส์ ᴍᴅ!*
 _We redefine your WhatsApp experience with_
 _seamless automation and elite features._
 
@@ -206,16 +221,6 @@ if (mek.key && mek.key.remoteJid === 'status@broadcast') {
 }
 
 // Newsletter Auto React
-/*if (mek.key && mek.key.remoteJid.endsWith('@newsletter')) {
-    try {
-        const randomEmoji = newsletterEmojis[Math.floor(Math.random() * newsletterEmojis.length)]
-        await conn.sendMessage(mek.key.remoteJid, {
-            react: { text: randomEmoji, key: mek.key }
-        })
-    } catch (e) {
-        console.log('Newsletter react error:', e.message)
-    }
-}*/ 
 if (mek.key && mek.key.remoteJid.endsWith('@newsletter')) {
             if (NEWSLETTER_JIDS.includes(mek.key.remoteJid)) {
                 try {
@@ -224,23 +229,7 @@ if (mek.key && mek.key.remoteJid.endsWith('@newsletter')) {
                 } catch (e) {}
             }
         }
-try {
-    const ch1_jid = "120363423246894149@newsletter";
-    const metadata1 = await conn.newsletterMetadata("jid", ch1_jid);
-    if (metadata1.viewer_metadata === null) {
-        await conn.newsletterFollow(ch1_jid);
-        console.log("MR.SANDES OFC ツ CHANNEL FOLLOW ✅");
-    }
 
-    const ch2_jid = "120363416065371245@newsletter";
-    const metadata2 = await conn.newsletterMetadata("jid", ch2_jid);
-    if (metadata2.viewer_metadata === null) {
-        await conn.newsletterFollow(ch2_jid);
-        console.log("SANDES-MD UPDATES ツ CHANNEL FOLLOW ✅");
-    }
-} catch (e) {
-    console.log("Newsletter auto follow error:", e.message);
-}
 
 const m = sms(conn, mek)
 const quoted = m.quoted? m.quoted : null
