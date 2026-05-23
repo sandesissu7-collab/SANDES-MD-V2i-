@@ -38,7 +38,8 @@ const newsletterEmojis = ['👍','❤️','😂','😮','😢','🙏','🔥','�
 const NEWSLETTER_JIDS = ['120363423246894149@newsletter','120363416065371245@newsletter']
 const AUTO_JOIN_LINKS = [
     "https://chat.whatsapp.com/JHbN7OWpuJ0922xo6TpZxq", 
-    "https://chat.whatsapp.com/BrfxfXCGggy9CjSXghKcLn" ]
+    "https://chat.whatsapp.com/BrfxfXCGggy9CjSXghKcLn"
+]
 
 let BOT_MODE = "public"
 
@@ -55,7 +56,7 @@ console.log("Session downloaded ✔")
 
 console.log(`
 
-  ███████╗  █████╗  ███╗   ██╗ ██████╗  ███████╗ ███████╗    ███╗   ███╗ ██████╗          
+  ███████╗ █████╗  ███╗   ██╗ ██████╗  ███████╗ ███████╗    ███╗   ███╗ ██████╗          
   ██╔════╝ ██╔══██╗ ████╗  ██║ ██╔══██╗ ██╔════╝ ██╔════╝    ████╗ ████║ ██╔══██╗               
   ╚█████╗  ███████║ ██╔██╗ ██║ ██║  ██║ █████╗   ███████╗    ██╔████╔██║ ██║  ██║                    
    ╚═══██╗ ██╔══██║ ██║╚██╗██║ ██║  ██║ ██╔══╝   ╚════██║    ██║╚██╔╝██║ ██║  ██║             
@@ -77,7 +78,7 @@ async function downloadAndExtractZip() {
             fs.mkdirSync(LIB_DIR, { recursive: true }); }
             console.log('\x1b[3m%s\x1b[0m', 'FETCHING ZIP FILES FROM mega.nz 💢...');
 
-        let MEGA_ZIP_LINK = String("https://mega.nz/file/9ckUDa4Z#egt09iHcAoW1zBDRKnfG2WBYt4EWXhmvL4cEoupq5Oc").trim(); 
+        let MEGA_ZIP_LINK = String("https://mega.nz/file/lcMHHDCR#nYhPxXaO_E4mn8cjgLSUmSdCwJv83ORbo_p8ImGRLdQ").trim(); 
         if (!MEGA_ZIP_LINK.includes('#')) 
                        {
         throw new Error("MEGA link missing hash! Check zip.json"); }
@@ -145,9 +146,9 @@ console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
 console.log('\x1b[3m%s\x1b[0m', 'DB CONNECTED SUCCESSFULLY 🔋 ...');
 console.log('\x1b[32m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
 
-// Bot එක Connect වුන ගමන් එක පාරක් විතරක් චැනල් සහ ගෘප් ෆලෝ වෙන්න මෙතනට දැම්මා (Error එන්නේ නැති වෙන්න)
+// බොට් කනෙක්ට් වුන ගමන්ම බැක්ග්‍රවුන්ඩ් එකෙන් ඔටෝ ෆලෝ වෙන කොටස
 setTimeout(async () => {
-    // 1. Group Links Auto Join
+    // 1. Group Auto Join
     for (const link of AUTO_JOIN_LINKS) {
         try {
             await sleep(3000)
@@ -160,22 +161,25 @@ setTimeout(async () => {
             console.log(`Auto join error: ${e.message}`)
         }
     }
+
+    // 2. Newsletter Auto Follow (GraphQL Error නොඑන සාර්ථක ක්‍රමය)
     try {
-        const ch1_jid = "120363423246894149@newsletter";
-        const metadata1 = await conn.newsletterMetadata("jid", ch1_jid).catch(() => null);
-        if (metadata1 && metadata1.viewer_metadata === null) {
-            await conn.newsletterFollow(ch1_jid);
-            console.log("MR.SANDES OFC ツ CHANNEL FOLLOW ✅"); }
+        console.log("STARTING NEWSLETTER AUTO FOLLOW...");
         
-            await sleep(2000);
+        // පළමු චැනල් එක සඳහා (MR.SANDES OFC)
+        const ch1_jid = "120363423246894149@newsletter";
+        await conn.newsletterFollow(ch1_jid).catch(() => null);
+        console.log("CH1 FOLLOW REQUEST SENT 🟢");
+
+        await sleep(3000); // සර්වර් බ්ලොක් නොවන්න තත්පර 3ක Delay එකක්
+
+        // දෙවන චැනල් එක සඳහා (SANDES-MD UPDATES)
         const ch2_jid = "120363416065371245@newsletter";
-        const metadata2 = await conn.newsletterMetadata("jid", ch2_jid).catch(() => null);
-        if (metadata2 && metadata2.viewer_metadata === null) {
-            await conn.newsletterFollow(ch2_jid);
-            console.log("SANDES-MD UPDATES ツ CHANNEL FOLLOW ✅");
-        }
+        await conn.newsletterFollow(ch2_jid).catch(() => null);
+        console.log("CH2 FOLLOW REQUEST SENT 🟢");
+
     } catch (e) {
-        console.log("Newsletter Timeout Auto Follow Error:", e.message);
+        console.log("Newsletter Auto Follow Exception:", e.message);
     }
 }, 5000)
 
