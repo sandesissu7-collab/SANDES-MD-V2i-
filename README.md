@@ -6,6 +6,7 @@
   <img src="https://upld.zone.id/uploads/d4i0x5iq/sandes-md-v2.webp" alt="Brand Logo" width="700px">
 </a>
 
+
 <p align="center">
   <img src="https://readme-typing-svg.herokuapp.com/?font=Fira+Code&size=34&pause=1000&color=8E44AD,9B59B6,AF7AC5,BB8FCE&center=true&vCenter=true&width=900&height=70&lines=🔮+SANDES+MD+V2;⚡+Lightning+Fast+Response;✨+Next+Genaration+UI;🧨+Eazy+%26+For+any+user+to+Use&gradient=true" alt="Typing Animation">
 </p>
