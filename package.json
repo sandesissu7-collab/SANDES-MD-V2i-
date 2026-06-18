@@ -1,7 +1,7 @@
 { 
   "name": "SANDES-MD",
   "version": "2.0.0",
-  "description": "A WhatsApp bot created By MR.SANDES 🍒",
+  "description": "A WhatsApp bot created By MR.SANDES 🍒 ",
   "main": "index.js",
   "scripts": {
     "start": "pm2 start index.js --deep-monitoring --attach --name SANDES-MD",
