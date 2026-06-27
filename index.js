@@ -105,13 +105,8 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 8080;
 
-function runServer() {
-    app.get("/", (req, res) => { res.send("SANDES-MD WORKING SUCCESSFULY 🗿"); });
-    app.listen(port, () => console.log(`SEVER RUNNING ON PORT http://localhost:${port}`));
-}
-
 async function connectToWA() {
-await downloadAndExtractZip(); 
+await downloadAndExtractZip();
 
 const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
 const { sms, downloadMediaMessage } = require('./lib/msg')
@@ -175,7 +170,11 @@ conn.ev.on('connection.update', async (update) => {
                     require("./plugins/" + plugin);
                 }
             });
-        
+
+    function runServer() {
+    app.get("/", (req, res) => { res.send("SANDES-MD WORKING SUCCESSFULY 🗿"); });
+    app.listen(port, () => console.log(`SEVER RUNNING ON PORT http://localhost:${port}`));
+}
 console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
 console.log('\x1b[3m%s\x1b[0m', 'DB CONNECTED SUCCESSFULLY 🔋 ...');
 console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
