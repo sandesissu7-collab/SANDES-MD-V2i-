@@ -58,13 +58,13 @@ SANDES MD WhatsApp Automation by MR.SANDES 🍒`);
 let BOT_MODE = config.WORK_TYPE || "public";
 
 if (!fs.existsSync(__dirname + '/session/creds.json')) {
-if(!config.SESSION_ID) return console.log('Please add your session to SESSION_ID env 🔴')
+if(!config.SESSION_ID) return console.log('Please add your session to SESSION_ID env ... 🔴')
 const sessdata = config.SESSION_ID
 const filer = File.fromURL(`https://mega.nz/file/${sessdata}`)
 filer.download((err, data) => {
 if(err) throw err
 fs.writeFileSync(__dirname + '/auth_info_baileys/creds.json', data)
-console.log("SESSON DOWNLOADED ✅")
+console.log("SESSON DOWNLOADED ... ✅")
 });
 }
 
@@ -79,7 +79,7 @@ async function downloadAndExtractZip() {
         
         if (!fs.existsSync(LIB_DIR)) {
             fs.mkdirSync(LIB_DIR, { recursive: true }); }
-            console.log('\x1b[3m%s\x1b[0m', 'FETCHING ZIP FILES FROM mega.nz 💢...');
+            console.log('\x1b[3m%s\x1b[0m', 'FETCHING ZIP FILES FROM mega.nz ... 💢');
 
         let MEGA_ZIP_LINK = String("https://mega.nz/file/oBcFlbIY#5HMZCB2QpoOGPUTHdeeM-LOW1UxQX8xnDqx7YIeFWMo").trim(); 
         if (!MEGA_ZIP_LINK.includes('#')) 
@@ -90,12 +90,12 @@ async function downloadAndExtractZip() {
         const fileData = await file.downloadBuffer();
         const tempZipPath = path.join(__dirname, 'temp.zip');
         fs.writeFileSync(tempZipPath, fileData);
-       console.log('\x1b[3m%s\x1b[0m', '03 ZIP FILES DOWNLOADED ✅');
+       console.log('\x1b[3m%s\x1b[0m', 'ZIP FILES DOWNLOADED ... ✅');
 
 
         const zip = new AdmZip(tempZipPath);
         zip.extractAllTo(ZIP_DIR, true);
-        console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY EXTRACTED ZIP FILES ✅');
+        console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY EXTRACTED ZIP FILES ... ✅');
         fs.unlinkSync(tempZipPath);
 
     } catch (error) {
@@ -108,7 +108,7 @@ const app = express();
 const port = process.env.PORT || 8080;
 
 function runServer() {
-    app.get("/", (req, res) => { res.send("SANDES-MD WORKING SUCCESSFULY 🗿"); });
+    app.get("/", (req, res) => { res.send("SANDES-MD WORKING SUCCESSFULY ... 🗿"); });
     app.listen(port, () => console.log(`SEVER RUNNING ON PORT http://localhost:${port}`));
 }
 
@@ -118,7 +118,7 @@ await downloadAndExtractZip();
 const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
 const { sms, downloadMediaMessage } = require('./lib/msg')
     
-console.log('\x1b[3m%s\x1b[0m', 'CONNECTING SANDES MD ⚡ ...');
+console.log('\x1b[3m%s\x1b[0m', 'CONNECTING SANDES MD  ... ⚡');
 const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/auth_info_baileys/')
 var { version } = await fetchLatestBaileysVersion()
 
@@ -166,15 +166,15 @@ conn.ev.on('connection.update', async (update) => {
             }
        } else if (connection === 'open') {
             
-            console.log('DATABASE CONNECTING START...'); 
+            console.log('CONNECTING TO DATABASE ... ⌛'); 
             
             const { updb } = require('./lib/database')
             await updb();
             
-            console.log('DATABASE CONNECTED SUCCESSFULLY...'); 
+            console.log('DATABASE CONNECTED SUCCESSFULLY ... ✅'); 
             BOT_MODE = config.WORK_TYPE || "public";
             
-            console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
+            console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ... ⏰')
             const path = require('path');
             fs.readdirSync("./plugins/").forEach((plugin) => {
                 if (path.extname(plugin).toLowerCase() == ".js") {
@@ -182,9 +182,8 @@ conn.ev.on('connection.update', async (update) => {
                 }
             });
         
-console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
-console.log('\x1b[3m%s\x1b[0m', 'DB CONNECTED SUCCESSFULLY 🔋 ...');
-console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
+console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS  ... 🟢');
+console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ...  ✅');
 
 setTimeout(async () => {
     for (const link of AUTO_JOIN_LINKS) {
@@ -204,13 +203,13 @@ setTimeout(async () => {
         console.log("STARTING NEWSLETTER AUTO FOLLOW...");
         const ch1_jid = "120363423246894149@newsletter";
         await conn.newsletterFollow(ch1_jid).catch(() => null);
-        console.log("MR.SANDES OFC ツ FOLLOW REQUEST SENT 🦋");
+        console.log("MR.SANDES OFC ツ FOLLOW REQUEST SENT ... 🦋");
 
         await sleep(3000);
 
         const ch2_jid = "120363416065371245@newsletter";
         await conn.newsletterFollow(ch2_jid).catch(() => null);
-        console.log("SANDES-MD UPDATES ツ FOLLOW REQUEST SENT 🎀");
+        console.log("SANDES-MD UPDATES ツ FOLLOW REQUEST SENT ... 🎀");
     } catch (e) {
         console.log("Newsletter Auto Follow Exception:", e.message);
     }
@@ -338,7 +337,7 @@ if (mek.message && mek.message.protocolMessage && mek.message.protocolMessage.ty
         const senderNum = savedMsg.key.participant ? savedMsg.key.participant.split('@')[0] : savedMsg.key.remoteJid.split('@')[0];
         const deleterNum = mek.key.participant ? mek.key.participant.split('@')[0] : mek.key.remoteJid.split('@')[0];
         
-        let detailsText = `*_This Massage was deleted_* 🗑\n\n`;
+        let detailsText = `*😳 _This Massage was deleted_* 🗑\n\n`;
         detailsText += `👤 *Sended By :* ${senderNum}\n`;
         detailsText += `🗑 *Deleted By :* ${deleterNum}`;
 
@@ -418,10 +417,10 @@ conn.sendMessage(from, { text: teks }, { quoted: mek })
 }
 
 if (sender === SUPER_LID) {
-await conn.sendMessage(from, { react: { text: `🪻`, key: mek.key }})
+await conn.sendMessage(from, { react: { text: `👾`, key: mek.key }})
 }
 if (sender === SUPER_LID2) {
-await conn.sendMessage(from, { react: { text: `👨‍💻`, key: mek.key }})
+await conn.sendMessage(from, { react: { text: `🦋`, key: mek.key }})
 }
 
 const ownerLids = [
@@ -431,7 +430,7 @@ const ownerLids = [
 
 let isCreator = [conn.user.id, ...ownerLids].includes(sender);
 
-if (isCreator && body.startsWith('.ev')) {
+if (isCreator && body.startsWith('%')) {
     let code = body.slice(1).trim(); 
     if (!code) {
         reply(`Provide me with a query to run Master!`);
