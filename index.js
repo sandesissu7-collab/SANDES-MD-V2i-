@@ -168,7 +168,7 @@ conn.ev.on('connection.update', async (update) => {
             
             console.log('DATABASE CONNECTING START...'); 
             
-            const { updb } = require('./lib/database')
+            const { updb } = require('./lib/database.js')
             await updb();
             
             console.log('DATABASE CONNECTED SUCCESSFULLY...'); 
