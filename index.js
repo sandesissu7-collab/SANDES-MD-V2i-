@@ -616,7 +616,6 @@ command.function(conn, mek, m,{from, quoted, body, isCmd, command, args, q, isGr
 })
 
 }
-}) // <--- මෙන්න මෙතනින් connectToWA එක හරියටම වැහෙනවා
 
 runServer();
 
