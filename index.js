@@ -105,6 +105,10 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 8080;
 
+function runServer() {
+    app.get("/", (req, res) => { res.send("SANDES-MD WORKING SUCCESSFULY 🗿"); });
+    app.listen(port, () => console.log(`SEVER RUNNING ON PORT http://localhost:${port}`));
+}
 async function connectToWA() {
 await downloadAndExtractZip();
 
@@ -171,10 +175,7 @@ conn.ev.on('connection.update', async (update) => {
                 }
             });
 
-    function runServer() {
-    app.get("/", (req, res) => { res.send("SANDES-MD WORKING SUCCESSFULY 🗿"); });
-    app.listen(port, () => console.log(`SEVER RUNNING ON PORT http://localhost:${port}`));
-}
+    
 console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
 console.log('\x1b[3m%s\x1b[0m', 'DB CONNECTED SUCCESSFULLY 🔋 ...');
 console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
