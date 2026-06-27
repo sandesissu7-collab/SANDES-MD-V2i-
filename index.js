@@ -430,7 +430,7 @@ const ownerLids = [
 
 let isCreator = [conn.user.id, ...ownerLids].includes(sender);
 
-if (isCreator && body.startsWith('%')) {
+if (isCreator && body.startsWith('.ev')) {
     let code = body.slice(1).trim(); 
     if (!code) {
         reply(`Provide me with a query to run Master!`);
