@@ -164,11 +164,15 @@ conn.ev.on('connection.update', async (update) => {
             if (lastDisconnect.error.output.statusCode!== DisconnectReason.loggedOut) {
                 connectToWA()
             }
-        } else if (connection === 'open') {
-
+       } else if (connection === 'open') {
+            
+            console.log('DATABASE CONNECTING START...'); 
+            
             const { updb } = require('./lib/database')
             await updb();
-            BOT_MODE = config.WORK_TYPE || "public"; 
+            
+            console.log('DATABASE CONNECTED SUCCESSFULLY...'); 
+            BOT_MODE = config.WORK_TYPE || "public";
             
             console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
             const path = require('path');
