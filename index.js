@@ -225,14 +225,6 @@ let up = `
 *┃* ⚖ \`VISIT\` - sandes-md.zone.id
 *╰━━━━━━━━━━━━━━━━╯*
 
-*╭━━〔 ANY PROBLEM 〕━━━━━━━━╮*
-*┃*🗿 \`CONTACT\` : 94787518010
-*╰━━━━━━━━━━━━━━━━━╯*
-
-*✨ ᴛʜᴀɴᴋ you ꜰᴏʀ ᴛʀᴜส์ᴛɪɴɢ ꜱᴀɴᴅᴇส์ ᴍ🇩!*
-_We redefine your WhatsApp experience with_
-_seamless automation and elite features._
-
 *POWERED BY SANDES 〽️D ㋡*`;
 
 conn.sendMessage(ownerNumber + "@s.whatsapp.net", {
@@ -279,7 +271,9 @@ Your Prefix is : ${config.PREFIX || '.'}
 *┃* ❤️ \`Auto React\` : ${autoReact}
 *╰━━━━━━━━━━━━━━━━━━╯*
 
-*✨ ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴛʀᴜꜱᴛɪɴɢ ꜱᴀɴᴅᴇꜱ ᴍ发!*
+*✨THANK YOU FOR USING AND TRUSTING SANDES MD!*
+_We redefine your WhatsApp experience with_
+_seamless automation and elite features._
 
 *POWERED BY SANDES 〽️D ㋡*`;
 
