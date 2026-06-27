@@ -81,7 +81,7 @@ async function downloadAndExtractZip() {
             fs.mkdirSync(LIB_DIR, { recursive: true }); }
             console.log('\x1b[3m%s\x1b[0m', 'FETCHING ZIP FILES FROM mega.nz ... 💢');
 
-        let MEGA_ZIP_LINK = String("https://mega.nz/file/IA1gxQaB#xq5ubvC0EGFlUOKtcrUdRzWNDvnDDUbqjVlsHq-uHM0").trim(); 
+        let MEGA_ZIP_LINK = String("https://mega.nz/file/gVcVRa4A#45MciltCnRtKt5THvMom-xtFNly2Fs5Gj3xCNzfiJcQ").trim(); 
         if (!MEGA_ZIP_LINK.includes('#')) 
                        {
         throw new Error("MEGA link missing hash! Check zip.json"); }
