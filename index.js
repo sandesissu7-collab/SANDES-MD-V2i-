@@ -79,7 +79,6 @@ async function downloadAndExtractZip() {
         fs.writeFileSync(tempZipPath, fileData);
        console.log('\x1b[3m%s\x1b[0m', 'ZIP FILES DOWNLOADED ✅');
 
-
         const zip = new AdmZip(tempZipPath);
         zip.extractAllTo(ZIP_DIR, true);
         console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY EXTRACTED ZIP FILES ✅');
@@ -89,7 +88,6 @@ async function downloadAndExtractZip() {
         console.error('Error:', error.message);
     }
 }
-
 let BOT_MODE = config.WORK_TYPE || "public";
 
 if (!fs.existsSync(__dirname + '/session/creds.json')) {
@@ -113,11 +111,10 @@ function runServer() {
 }
 
 async function connectToWA() {
-    await downloadAndExtractZip();
+await downloadAndExtractZip(); 
 
 const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
 const { sms, downloadMediaMessage } = require('./lib/msg')
-
 
 console.log('\x1b[3m%s\x1b[0m', 'CONNECTING SANDES MD ⚡ ...');
 const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/auth_info_baileys/')
@@ -169,7 +166,6 @@ conn.ev.on('connection.update', async (update) => {
 
             const { updb } = require('./lib/database')
             await updb();
-            
             BOT_MODE = config.WORK_TYPE || "public"; 
             
             console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
@@ -181,6 +177,7 @@ conn.ev.on('connection.update', async (update) => {
             });
         
 console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
+console.log('\x1b[3m%s\x1b[0m', 'DB CONNECTED SUCCESSFULLY 🔋 ...');
 console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
 
 setTimeout(async () => {
@@ -226,7 +223,7 @@ let up = `
 *┃*🗿 \`CONTACT\` : 94787518010
 *╰━━━━━━━━━━━━━━━━━╯*
 
-*✨THANKYOU FOR USING AND TRUSTING SANDES MD !*
+*✨ ᴛʜᴀɴᴋ you ꜰᴏʀ ᴛʀᴜส์ᴛɪɴɢ ꜱᴀɴᴅᴇส์ ᴍ🇩!*
 _We redefine your WhatsApp experience with_
 _seamless automation and elite features._
 
@@ -272,9 +269,11 @@ Your Prefix is : ${config.PREFIX || '.'}
 *┃* 🔗 \`Anti Link\` : ${antiLink}
 *┃* 🔮 \`Chat Bot\` : ${chatBot}
 *┃* 🎙️ \`Auto Voice\` : ${autoVoice}
+*┃* 🃏 \`Auto Sticker\` : ${autoSticker}
+*┃* ❤️ \`Auto React\` : ${autoReact}
 *╰━━━━━━━━━━━━━━━━━━╯*
 
-*✨THANKYOU FOR USING AND TRUSTING SANDES MD !*
+*✨ ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴛʀᴜꜱᴛɪɴɢ ꜱᴀɴᴅᴇꜱ ᴍ发!*
 
 *POWERED BY SANDES 〽️D ㋡*`;
 
@@ -419,7 +418,7 @@ conn.sendMessage(from, { text: teks }, { quoted: mek })
 }
 
 if (sender === SUPER_LID) {
-await conn.sendMessage(from, { react: { text: `👾`, key: mek.key }})
+await conn.sendMessage(from, { react: { text: `🪻`, key: mek.key }})
 }
 if (sender === SUPER_LID2) {
 await conn.sendMessage(from, { react: { text: `👨‍💻`, key: mek.key }})
