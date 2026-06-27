@@ -105,10 +105,6 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 8080;
 
-function runServer() {
-    app.get("/", (req, res) => { res.send("SANDES-MD WORKING SUCCESSFULY 🗿"); });
-    app.listen(port, () => console.log(`SEVER RUNNING ON PORT http://localhost:${port}`));
-}
 async function connectToWA() {
 await downloadAndExtractZip();
 
@@ -615,8 +611,12 @@ command.function(conn, mek, m,{from, quoted, body, isCmd, command, args, q, isGr
 })
 
 }
+app.get("/", (req, res) => {
+res.send("SANDES-MD WORKING SUCCESSFULY 🗿");
+});
 
-runServer();
+app.listen(port, () => console.log(`SEVER RUNNING ON PORT http://localhost:${port}`));
+
 
 setTimeout(() => {
 connectToWA()
