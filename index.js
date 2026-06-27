@@ -105,12 +105,12 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 8080;
 
-async function connectToWA() {
-await downloadAndExtractZip();
+async function connectToWA() {  
+await downloadAndExtractZip(); 
 
 const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
 const { sms, downloadMediaMessage } = require('./lib/msg')
-
+    
 console.log('\x1b[3m%s\x1b[0m', 'CONNECTING SANDES MD ⚡ ...');
 const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/auth_info_baileys/')
 var { version } = await fetchLatestBaileysVersion()
@@ -124,30 +124,6 @@ const conn = makeWASocket({
         version,
         msgRetryCounterCache
         })
-        
-conn.ev.on('messages.update', async (updates) => {
-    for (const update of updates) {
-        if (update.update && update.update.message) {
-            const msgId = update.key.id;
-            const oldMsg = msgStore.get(msgId);
-
-            if (oldMsg) {
-                const oldText = oldMsg.message.conversation || oldMsg.message.extendedTextMessage?.text || oldMsg.message.imageMessage?.caption || oldMsg.message.videoMessage?.caption;
-                const newText = update.update.message.conversation || update.update.message.extendedTextMessage?.text || update.update.message.imageMessage?.caption || update.update.message.videoMessage?.caption;
-
-                if (oldText && newText && oldText !== newText) {
-                    const currentChat = oldMsg.key.remoteJid;
-                    await conn.sendMessage(currentChat, { 
-                        text: `📝 *Edited Message Detected!*\n\n*Old Massage:* ${oldText}\n\n*New massage:* ${newText}` 
-                    }, { quoted: oldMsg });
-                    
-                    msgStore.set(msgId, JSON.parse(JSON.stringify({ key: update.key, message: update.update.message })));
-                }
-            }
-        }
-    }
-});
-
 conn.ev.on('connection.update', async (update) => {
         const {
             connection,
@@ -159,10 +135,6 @@ conn.ev.on('connection.update', async (update) => {
             }
         } else if (connection === 'open') {
 
-            const { updb } = require('./lib/database')
-            await updb();
-            BOT_MODE = config.WORK_TYPE || "public"; 
-            
             console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
             const path = require('path');
             fs.readdirSync("./plugins/").forEach((plugin) => {
@@ -170,12 +142,11 @@ conn.ev.on('connection.update', async (update) => {
                     require("./plugins/" + plugin);
                 }
             });
-
-    
+            
 console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
 console.log('\x1b[3m%s\x1b[0m', 'DB CONNECTED SUCCESSFULLY 🔋 ...');
-console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
-
+console.log('\x1b[32m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
+            
 setTimeout(async () => {
     for (const link of AUTO_JOIN_LINKS) {
         try {
