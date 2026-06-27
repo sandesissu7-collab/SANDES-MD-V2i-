@@ -174,13 +174,15 @@ conn.ev.on('connection.update', async (update) => {
             console.log('DATABASE CONNECTED SUCCESSFULLY ... ✅'); 
             BOT_MODE = config.WORK_TYPE || "public";
             
-            console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ... ⏰')
-            const path = require('path');
-            fs.readdirSync("./plugins/").forEach((plugin) => {
-                if (path.extname(plugin).toLowerCase() == ".js") {
-                    require("./plugins/" + plugin);
-                }
-            });
+           console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ... ⏰')
+           const path = require('path');
+           fs.readdirSync("./plugins/").forEach((plugin) => {
+           if (path.extname(plugin).toLowerCase() == ".js") {
+           console.log(`Loading plugin: ${plugin} ... 🔄`); 
+           require("./plugins/" + plugin);
+           console.log(`Loaded successfully: ${plugin} ✅`); 
+    }
+});
         
 console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
 console.log('\x1b[3m%s\x1b[0m', 'DB CONNECTED SUCCESSFULLY 🔋 ...');
