@@ -107,7 +107,7 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Express Server එක මුලින්ම run වෙන්න එලියෙන් තැබුවා
+
 function runServer() {
     app.get("/", (req, res) => { res.send("SANDES-MD WORKING SUCCESSFULY 🗿"); });
     app.listen(port, () => console.log(`SEVER RUNNING ON PORT http://localhost:${port}`));
@@ -174,8 +174,8 @@ async function connectToWA() {
                 BOT_MODE = config.WORK_TYPE || "public"; 
                 
                console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
-               const path = require('path');
-               fs.readdirSync("./plugins/").forEach((plugin) => {
+
+                fs.readdirSync("./plugins/").forEach((plugin) => {
                if (path.extname(plugin).toLowerCase() == ".js") {
                try {
                require("./plugins/" + plugin);
