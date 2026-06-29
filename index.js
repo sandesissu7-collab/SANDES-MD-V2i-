@@ -168,12 +168,12 @@ async function connectToWA() {
             }
         } else if (connection === 'open') {
             try {
-                // Database කෑල්ල නැති නිසා Crash වෙන එක වළක්වන්න try...catch දාලා තියෙන්නේ
                 try {
+                    
                     const { updb } = require('./lib/database');
                     await updb();
                 } catch (dbErr) {
-                    // Database ෆයිල් එක නැතත් ඉස්සරහට යන්න දෙනවා
+                    
                 }
                 
                 BOT_MODE = config.WORK_TYPE || "public"; 
@@ -192,11 +192,9 @@ async function connectToWA() {
                             }
                         }
                     });
-                    
-                    // 🔷 ප්ලගින්ස් ඔක්කොම එකපාර ප්‍රින්ට් කරන ලොග් එක
-                    console.log(` Successfully Installed ${pluginCount} Plugins ✅ ... `);
-                    console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
-                    console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
+
+console.log('\x1b[3m%s\x1b[0m', `📦 SUCCESSFULLY INSTALLED ${pluginCount} PLUGINS 🔌 ...`);
+console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
                     
                 } catch (loopError) {
                     console.log(`❌ ERROR READING PLUGINS DIRECTORY:`, loopError.message);
