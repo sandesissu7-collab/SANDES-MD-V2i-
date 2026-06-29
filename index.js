@@ -170,10 +170,10 @@ async function connectToWA() {
                 }
             } else if (connection === 'open') {
             try {
-                console.log('🔴 CONNECTION OPENED DETECTED! TRYING TO LOAD DB...');
-                const { updb } = require('./lib/database');
-                await updb();
-                console.log('🔴 DB LOADED SUCCESSFULLY! NEXT STEP...');
+               // console.log('🔴 CONNECTION OPENED DETECTED! TRYING TO LOAD DB...');
+               // const { updb } = require('./lib/database');
+               // await updb();
+               // console.log('🔴 DB LOADED SUCCESSFULLY! NEXT STEP...');
                 
                 BOT_MODE = config.WORK_TYPE || "public"; 
                 
