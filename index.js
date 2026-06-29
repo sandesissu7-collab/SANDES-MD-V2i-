@@ -181,7 +181,11 @@ async function connectToWA() {
 
                 fs.readdirSync("./plugins/").forEach((plugin) => {
                     if (path.extname(plugin).toLowerCase() == ".js") {
-                        require("./plugins/" + plugin);
+                        try {
+                            require("./plugins/" + plugin);
+                        } catch (pluginError) {
+                            console.log(`❌ ERROR IN PLUGIN (${plugin}):`, pluginError.message);
+                        }
                     }
                 });
                 
