@@ -169,7 +169,7 @@ async function connectToWA() {
             } else if (connection === 'open') {
 
                 const { updb } = require('./lib/database')
-                await updb();
+                updb();
                 
                 BOT_MODE = config.WORK_TYPE || "public"; 
                 
