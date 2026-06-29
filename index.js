@@ -175,7 +175,7 @@ async function connectToWA() {
                 
                console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
 
-                fs.readdirSync("./plugins/").forEach((plugin) => {
+                fs.readdirSync(__dirname + "/plugins/").forEach((plugin) => {
                if (path.extname(plugin).toLowerCase() == ".js") {
                try {
                require("./plugins/" + plugin);
