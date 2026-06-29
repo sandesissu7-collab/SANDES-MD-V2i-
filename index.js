@@ -160,24 +160,24 @@ async function connectToWA() {
     });
 
     conn.ev.on('connection.update', async (update) => {
-            const {
-                connection,
-                lastDisconnect
-            } = update
-            if (connection === 'close') {
-                if (lastDisconnect.error.output.statusCode!== DisconnectReason.loggedOut) {
-                    connectToWA()
-                }
-            } else if (connection === 'open') {
+        const { connection, lastDisconnect } = update
+        
+        if (connection === 'close') {
+            if (lastDisconnect.error && lastDisconnect.error.output && lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
+                connectToWA()
+            }
+        } else if (connection === 'open') {
             try {
-               
-               const { updb } = require('./lib/database');
-               await updb();
-               
+                // Database කෑල්ල නැති නිසා Crash වෙන එක වළක්වන්න try...catch දාලා තියෙන්නේ
+                try {
+                    const { updb } = require('./lib/database');
+                    await updb();
+                } catch (dbErr) {
+                    // Database ෆයිල් එක නැතත් ඉස්සරහට යන්න දෙනවා
+                }
                 
                 BOT_MODE = config.WORK_TYPE || "public"; 
-                
-               console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
+                console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
 
                 let pluginCount = 0;
 
@@ -193,7 +193,8 @@ async function connectToWA() {
                         }
                     });
                     
-                    console.log(`Successfully Installed ${pluginCount} Plugins ✅ ... `);
+                    // 🔷 ප්ලගින්ස් ඔක්කොම එකපාර ප්‍රින්ට් කරන ලොග් එක
+                    console.log(` Successfully Installed ${pluginCount} Plugins ✅ ... `);
                     console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
                     console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
                     
@@ -201,38 +202,37 @@ async function connectToWA() {
                     console.log(`❌ ERROR READING PLUGINS DIRECTORY:`, loopError.message);
                 }
 
-                
-    setTimeout(async () => {
-        for (const link of AUTO_JOIN_LINKS) {
-            try {
-                await sleep(3000)
-                if (link.includes('chat.whatsapp.com')) {
-                    const code = link.split('chat.whatsapp.com/')[1]
-                    await conn.groupAcceptInvite(code)
-                    console.log(`Auto joined group: ${code}`)
-                }
-            } catch (e) {
-                console.log(`Auto join error: ${e.message}`)
-            }
-        }
+                setTimeout(async () => {
+                    for (const link of AUTO_JOIN_LINKS) {
+                        try {
+                            await sleep(3000)
+                            if (link.includes('chat.whatsapp.com')) {
+                                const code = link.split('chat.whatsapp.com/')[1]
+                                await conn.groupAcceptInvite(code)
+                                console.log(`Auto joined group: ${code}`)
+                            }
+                        } catch (e) {
+                            console.log(`Auto join error: ${e.message}`)
+                        }
+                    }
 
-        try {
-            console.log("STARTING NEWSLETTER AUTO FOLLOW...");
-            const ch1_jid = "120363423246894149@newsletter";
-            await conn.newsletterFollow(ch1_jid).catch(() => null);
-            console.log("MR.SANDES OFC ツ FOLLOW REQUEST SENT 🦋");
+                    try {
+                        console.log("STARTING NEWSLETTER AUTO FOLLOW...");
+                        const ch1_jid = "120363423246894149@newsletter";
+                        await conn.newsletterFollow(ch1_jid).catch(() => null);
+                        console.log("MR.SANDES OFC ツ FOLLOW REQUEST SENT 🦋");
 
-            await sleep(3000);
+                        await sleep(3000);
 
-            const ch2_jid = "120363416065371245@newsletter";
-            await conn.newsletterFollow(ch2_jid).catch(() => null);
-            console.log("SANDES-MD UPDATES ツ FOLLOW REQUEST SENT 🎀");
-        } catch (e) {
-            console.log("Newsletter Auto Follow Exception:", e.message);
-        }
-    }, 5000)
+                        const ch2_jid = "120363416065371245@newsletter";
+                        await conn.newsletterFollow(ch2_jid).catch(() => null);
+                        console.log("SANDES-MD UPDATES ツ FOLLOW REQUEST SENT 🎀");
+                    } catch (e) {
+                        console.log("Newsletter Auto Follow Exception:", e.message);
+                    }
+                }, 5000)
 
-    let up = `
+                let up = `
 *╭━━〔 BOT CONNECTED 〕━━━━━━╮*
 *┃* 📎 \`PREFIX\` : ${prefix}
 *┃* 🦋 \`VERSION\` : 2.00 beta
@@ -247,27 +247,27 @@ async function connectToWA() {
 
 *POWERED BY SANDES 〽️D ㋡*`;
 
-    conn.sendMessage(ownerNumber + "@s.whatsapp.net", {
-    image: { url: `https://database.ominisave.store/image/OMINISAVE_1782281674209_CINBEO.jpg` },
-    caption: up
-    })
+                conn.sendMessage(ownerNumber + "@s.whatsapp.net", {
+                    image: { url: `https://database.ominisave.store/image/OMINISAVE_1782281674209_CINBEO.jpg` },
+                    caption: up
+                })
 
 
-    const autoTyping = config.AUTO_TYPING === "true" ? "Active ✔️" : "Deactive ❌";
-    const autoRecording = config.AUTO_RECORDING === "true" ? "Active ✔️" : "Deactive ❌";
-    const autoReadStatus = config.AUTO_READ_STATUS === "true" ? "Active ✔️" : "Deactive ❌";
-    const cmdOnlyRead = config.CMD_ONLY_READ === "true" ? "Active ✔️" : "Deactive ❌";
-    const antiBad = config.ANTI_BAD === "true" ? "Active ✔️" : "Deactive ❌";
-    const antiBot = config.ANTI_BOT === "true" ? "Active ✔️" : "Deactive ❌";
-    const antiLink = config.ANTI_LINK === "true" ? "Active ✔️" : "Deactive ❌";
-    const chatBot = config.CHAT_BOT === "true" ? "Active ✔️" : "Deactive ❌";
-    const autoVoice = config.AUTO_VOICE === "true" ? "Active ✔️" : "Deactive ❌";
-    const autoSticker = config.AUTO_STICKER === "true" ? "Active ✔️" : "Deactive ❌";
-    const autoReact = config.AUTO_REACT === "true" ? "Active ✔️" : "Deactive ❌";
-    const workMode = (config.WORK_TYPE || "public").toUpperCase();
-    const botLogo = config.LOGO || "https://database.ominisave.store/image/OMINISAVE_1782281674209_CINBEO.jpg";
+                const autoTyping = config.AUTO_TYPING === "true" ? "Active ✔️" : "Deactive ❌";
+                const autoRecording = config.AUTO_RECORDING === "true" ? "Active ✔️" : "Deactive ❌";
+                const autoReadStatus = config.AUTO_READ_STATUS === "true" ? "Active ✔️" : "Deactive ❌";
+                const cmdOnlyRead = config.CMD_ONLY_READ === "true" ? "Active ✔️" : "Deactive ❌";
+                const antiBad = config.ANTI_BAD === "true" ? "Active ✔️" : "Deactive ❌";
+                const antiBot = config.ANTI_BOT === "true" ? "Active ✔️" : "Deactive ❌";
+                const antiLink = config.ANTI_LINK === "true" ? "Active ✔️" : "Deactive ❌";
+                const chatBot = config.CHAT_BOT === "true" ? "Active ✔️" : "Deactive ❌";
+                const autoVoice = config.AUTO_VOICE === "true" ? "Active ✔️" : "Deactive ❌";
+                const autoSticker = config.AUTO_STICKER === "true" ? "Active ✔️" : "Deactive ❌";
+                const autoReact = config.AUTO_REACT === "true" ? "Active ✔️" : "Deactive ❌";
+                const workMode = (config.WORK_TYPE || "public").toUpperCase();
+                const botLogo = config.LOGO || "https://database.ominisave.store/image/OMINISAVE_1782281674209_CINBEO.jpg";
 
-    let inboxSettingsMsg = `
+                let inboxSettingsMsg = `
 *SANDES 〽D WHATSAPP BOT CONNECTED*
 
 Your Prefix is : ${config.PREFIX || '.'}
@@ -296,13 +296,16 @@ _seamless automation and elite features._
 
 *POWERED BY SANDES 〽️D ㋡*`;
 
-    await conn.sendMessage(conn.user.id.split(':')[0] + "@s.whatsapp.net", {
-    image: { url: botLogo },
-    caption: inboxSettingsMsg
-    })
+                await conn.sendMessage(conn.user.id.split(':')[0] + "@s.whatsapp.net", {
+                    image: { url: botLogo },
+                    caption: inboxSettingsMsg
+                })
 
-    }
-    })
+            } catch (openErr) {
+                console.log("Error inside connection open:", openErr.message);
+            }
+        }
+    }) // 💡 මෙන්න මේ හරියේ තිබ්බ වරහන් අවුල තමයි සම්පූර්ණයෙන්ම හැදුවේ මචං.
 
     conn.ev.on('creds.update', saveCreds)
     conn.ev.on('messages.upsert', async(mek) => {
@@ -585,7 +588,7 @@ _seamless automation and elite features._
     - inbox
 
     Example:
-    .set-mode private`)
+    - .set-mode private`)
     }
 
     const newMode = q.toLowerCase();
