@@ -113,6 +113,8 @@ function runServer() {
     app.listen(port, () => console.log(`SEVER RUNNING ON PORT http://localhost:${port}`));
 }
 
+let conn;
+
 async function connectToWA() {
     await downloadAndExtractZip();
 
@@ -169,21 +171,17 @@ async function connectToWA() {
             } else if (connection === 'open') {
 
                 const { updb } = require('./lib/database')
-                updb();
+                await updb();
                 
                 BOT_MODE = config.WORK_TYPE || "public"; 
                 
                console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
 
-                fs.readdirSync(__dirname + "/plugins/").forEach((plugin) => {
-               if (path.extname(plugin).toLowerCase() == ".js") {
-               try {
-               require("./plugins/" + plugin);
-                    } catch (pluginError) {
-                    console.error(`❌ Error loading plugin ${plugin}:`, pluginError.message);
-                      }
-                   }
-                 });
+                fs.readdirSync("./plugins/").forEach((plugin) => {
+                if (path.extname(plugin).toLowerCase() == ".js") {
+                    require("./plugins/" + plugin);
+                }
+            });
             
     console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
     console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
