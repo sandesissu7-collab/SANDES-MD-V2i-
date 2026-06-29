@@ -177,15 +177,29 @@ async function connectToWA() {
                 
                 BOT_MODE = config.WORK_TYPE || "public"; 
                 
-               console.log('\x1b[3m%s\x1b[0m','INSTALLING PLUGINS ⏰ ... ')
-               fs.readdirSync("./plugins/").forEach((plugin) => {
-                if (path.extname(plugin).toLowerCase() == ".js") {
-                    require("./plugins/" + plugin);
-                }
-            });
+               console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
 
-                console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
-                console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
+                let pluginCount = 0;
+
+                try {
+                    fs.readdirSync("./plugins/").forEach((plugin) => {
+                        if (path.extname(plugin).toLowerCase() == ".js") {
+                            try {
+                                require("./plugins/" + plugin);
+                                pluginCount++;
+                            } catch (e) {
+                                console.log(`❌ ERROR IN ${plugin}:`, e.message);
+                            }
+                        }
+                    });
+                    
+                    console.log(`Successfully Installed ${pluginCount} Plugins ✅ ... `);
+                    console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
+                    console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
+                    
+                } catch (loopError) {
+                    console.log(`❌ ERROR READING PLUGINS DIRECTORY:`, loopError.message);
+                }
 
                 
     setTimeout(async () => {
