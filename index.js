@@ -179,12 +179,15 @@ async function connectToWA() {
                 
                 console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
 
-                fs.readdirSync("./plugins/").forEach((plugin) => {
+              fs.readdirSync("./plugins/").forEach((plugin) => {
                     if (path.extname(plugin).toLowerCase() == ".js") {
+
+                        console.log(`🔷 LOADING PLUGIN: ${plugin}`); 
+                        
                         try {
                             require("./plugins/" + plugin);
-                        } catch (pluginError) {
-                            console.log(`❌ ERROR IN PLUGIN (${plugin}):`, pluginError.message);
+                        } catch (e) {
+                            console.log(`❌ ERROR IN ${plugin}:`, e.message);
                         }
                     }
                 });
