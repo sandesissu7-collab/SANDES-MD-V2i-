@@ -219,23 +219,19 @@ async function connectToWA() {
     }, 5000)
 
     let up = `
-    *╭━━〔 BOT CONNECTED 〕━━━━━━╮*
-    *┃* 📎 \`PREFIX\` : ${prefix}
-    *┃* 🦋 \`VERSION\` : 2.00 beta
-    *┃* 👾 \`DEVELOPER\` - Sandes Isuranda
-    *┃* 🍒 \`SUDO\` : 94787518010
-    *┃* ⚖ \`VISIT\` - sandes-md.zone.id
-    *╰━━━━━━━━━━━━━━━━╯*
+*╭━━〔 BOT CONNECTED 〕━━━━━━╮*
+*┃* 📎 \`PREFIX\` : ${prefix}
+*┃* 🦋 \`VERSION\` : 2.00 beta
+*┃* 👾 \`DEVELOPER\` - Sandes Isuranda
+*┃* 🍒 \`SUDO\` : 94787518010
+*┃* ⚖ \`VISIT\` - sandes-md.zone.id
+*╰━━━━━━━━━━━━━━━━╯*
 
-    *╭━━〔 ANY PROBLEM 〕━━━━━━━━╮*
-    *┃*🗿 \`CONTACT\` : 94787518010
-    *╰━━━━━━━━━━━━━━━━━╯*
+*╭━━〔 ANY PROBLEM 〕━━━━━━━━╮*
+*┃*🗿 \`CONTACT\` : 94787518010
+*╰━━━━━━━━━━━━━━━━━╯*
 
-    *✨THANKYOU FOR USING AND TRUSTING SANDES MD !*
-    _We redefine your WhatsApp experience with_
-    _seamless automation and elite features._
-
-    *POWERED BY SANDES 〽️D ㋡*`;
+*POWERED BY SANDES 〽️D ㋡*`;
 
     conn.sendMessage(ownerNumber + "@s.whatsapp.net", {
     image: { url: `https://database.ominisave.store/image/OMINISAVE_1782281674209_CINBEO.jpg` },
@@ -258,30 +254,33 @@ async function connectToWA() {
     const botLogo = config.LOGO || "https://database.ominisave.store/image/OMINISAVE_1782281674209_CINBEO.jpg";
 
     let inboxSettingsMsg = `
-    *SANDES 〽D WHATSAPP BOT CONNECTED*
+*SANDES 〽D WHATSAPP BOT CONNECTED*
 
-    Your Prefix is : ${config.PREFIX || '.'}
+Your Prefix is : ${config.PREFIX || '.'}
 
-    *╭━━〔 ANY PROBLEM 〕━━━━━━━━╮*
-    *┃*🗿 \`CONTACT\` : 94787518010
-    *╰━━━━━━━━━━━━━━━━━╯*
+*╭━━〔 ANY PROBLEM 〕━━━━━━━━╮*
+*┃*🗿 \`CONTACT\` : 94787518010
+*╰━━━━━━━━━━━━━━━━━╯*
 
-    *╭━━〔 BOT SETTINGS 〕━━━━╮*
-    *┃* 🌐 \`WORK MODE\` : ${workMode}
-    *┃* ⌨️ \`Auto Typing\` : ${autoTyping}
-    *┃* 🎙️ \`Auto Recording\` : ${autoRecording}
-    *┃* 👁️ \`Read Status\` : ${autoReadStatus}
-    *┃* 📖 \`Cmd Only Read\` : ${cmdOnlyRead}
-    *┃* 🚮 \`Anti Bad\` : ${antiBad}
-    *┃* 🎀 \`Anti Bot\` : ${antiBot}
-    *┃* 🔗 \`Anti Link\` : ${antiLink}
-    *┃* 🔮 \`Chat Bot\` : ${chatBot}
-    *┃* 🎙️ \`Auto Voice\` : ${autoVoice}
-    *╰━━━━━━━━━━━━━━━━━━╯*
+*╭━━〔 BOT SETTINGS 〕━━━━╮*
+*┃* 🌐 \`WORK MODE\` : ${workMode}
+*┃* ⌨️ \`Auto Typing\` : ${autoTyping}
+*┃* 🎙️ \`Auto Recording\` : ${autoRecording}
+*┃* 👁️ \`Read Status\` : ${autoReadStatus}
+*┃* 📖 \`Cmd Only Read\` : ${cmdOnlyRead}
+*┃* 🚮 \`Anti Bad\` : ${antiBad}
+*┃* 🎀 \`Anti Bot\` : ${antiBot}
+*┃* 🔗 \`Anti Link\` : ${antiLink}
+*┃* 🔮 \`Chat Bot\` : ${chatBot}
+*┃* 🎙️ \`Auto Voice\` : ${autoVoice}
+*╰━━━━━━━━━━━━━━━━━━╯*
 
-    *✨THANKYOU FOR USING AND TRUSTING SANDES MD !*
 
-    *POWERED BY SANDES 〽️D ㋡*`;
+✨*THANKYOU FOR USING AND TRUSTING SANDES MD !*
+_We redefine your WhatsApp experience with_
+_seamless automation and elite features._
+
+*POWERED BY SANDES 〽️D ㋡*`;
 
     await conn.sendMessage(conn.user.id.split(':')[0] + "@s.whatsapp.net", {
     image: { url: botLogo },
@@ -377,7 +376,7 @@ async function connectToWA() {
 
     const senderNumber = sender.split('@')[0]
     const botNumber = conn.user.id.split(':')[0]
-    const pushname = mek.pushName || 'Sin Nombre'
+    const pushname = mek.pushName || 'Unknown User'
     const isMe = botNumber.includes(senderNumber)
     const isOwner = ownerNumber.includes(senderNumber) || isMe || sender === SUPER_LID
     const botNumber2 = await jidNormalizedUser(conn.user.id);
@@ -622,7 +621,7 @@ async function connectToWA() {
 
 }
 
-// මෙතනින් runServer මුලින්ම වැඩ කරන්න ගන්නවා
+
 runServer();
 
 setTimeout(() => {
