@@ -177,7 +177,7 @@ async function connectToWA() {
                 
                 BOT_MODE = config.WORK_TYPE || "public"; 
                 
-               console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
+               console.log('\x1b[3m%s\x1b[0m','INSTALLING PLUGINS ⏰ ... ')
 
                 let pluginCount = 0; 
 
@@ -193,7 +193,7 @@ async function connectToWA() {
                 });
 
 
-                console.log('\x1b[3m%s\x1b[0m','Successfully Installed ${pluginCount} Plugins!');
+                console.log(` ${pluginCount} PLUGINS INSTALLED  ✅ ...`);
                 console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
                 console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
 
