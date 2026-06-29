@@ -113,7 +113,7 @@ function runServer() {
     app.listen(port, () => console.log(`SEVER RUNNING ON PORT http://localhost:${port}`));
 }
 
-let conn;
+
 
 async function connectToWA() {
     await downloadAndExtractZip();
@@ -175,8 +175,6 @@ async function connectToWA() {
                 
                 BOT_MODE = config.WORK_TYPE || "public"; 
                 
-               console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
-
                 fs.readdirSync("./plugins/").forEach((plugin) => {
                 if (path.extname(plugin).toLowerCase() == ".js") {
                     require("./plugins/" + plugin);
