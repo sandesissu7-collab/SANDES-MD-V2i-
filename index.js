@@ -178,22 +178,12 @@ async function connectToWA() {
                 BOT_MODE = config.WORK_TYPE || "public"; 
                 
                console.log('\x1b[3m%s\x1b[0m','INSTALLING PLUGINS ⏰ ... ')
+               fs.readdirSync("./plugins/").forEach((plugin) => {
+                if (path.extname(plugin).toLowerCase() == ".js") {
+                    require("./plugins/" + plugin);
+                }
+            });
 
-                let pluginCount = 0; 
-
-                fs.readdirSync("./plugins/").forEach((plugin) => {
-                    if (path.extname(plugin).toLowerCase() == ".js") {
-                        try {
-                            require("./plugins/" + plugin);
-                            pluginCount++; 
-                        } catch (e) {
-                            console.log(`❌ ERROR IN ${plugin}:`, e.message);
-                        }
-                    }
-                });
-
-
-                console.log(` ${pluginCount} PLUGINS INSTALLED  ✅ ...`);
                 console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
                 console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
 
