@@ -170,35 +170,33 @@ async function connectToWA() {
                 }
             } else if (connection === 'open') {
             try {
-               // console.log('🔴 CONNECTION OPENED DETECTED! TRYING TO LOAD DB...');
-               // const { updb } = require('./lib/database');
-               // await updb();
-               // console.log('🔴 DB LOADED SUCCESSFULLY! NEXT STEP...');
+               
+               const { updb } = require('./lib/database');
+               await updb();
+               
                 
                 BOT_MODE = config.WORK_TYPE || "public"; 
                 
-                console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
+               console.log('\x1b[3m%s\x1b[0m','INSTALLING SANDES MD ⏰... ')
 
-              fs.readdirSync("./plugins/").forEach((plugin) => {
+                let pluginCount = 0; 
+
+                fs.readdirSync("./plugins/").forEach((plugin) => {
                     if (path.extname(plugin).toLowerCase() == ".js") {
-
-                        console.log(`🔷 LOADING PLUGIN: ${plugin}`); 
-                        
                         try {
                             require("./plugins/" + plugin);
+                            pluginCount++; 
                         } catch (e) {
                             console.log(`❌ ERROR IN ${plugin}:`, e.message);
                         }
                     }
                 });
-                
+
+
+                console.log('\x1b[3m%s\x1b[0m','Successfully Installed ${pluginCount} Plugins!');
                 console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY INSTALLED PLUGINS 🟢 ...');
                 console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
-            } catch (err) {
-                console.log('❌ CRITICAL ERROR INSIDE OPEN CONNECTION:', err);
-            }
 
-            // ඉතිරි කෝඩ් එක (setTimeout, sendMessage ආදී දේවල්) මෙතනින් පල්ලෙහාට සාමාන්‍ය පරිදි තියන්න...
                 
     setTimeout(async () => {
         for (const link of AUTO_JOIN_LINKS) {
