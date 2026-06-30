@@ -17,6 +17,7 @@ if (fs.existsSync('config.env')) require('dotenv').config({ path: './config.env'
 function convertToBool(text, fault = 'true') {
     return text === fault ? true : false;
 }
+
 module.exports = {
 SESSION_ID: process.env.SESSION_ID || "ZYlB2A4T#4VfMNFPrFYmk0cm0Uqv6FGV52a0DE7TSk0j4TG5Zwy0",
 ALIVE_IMG : process.env.ALIVE_IMG || "https://upld.zone.id/uploads/d4i0x5iq/sandes-md-v2.webp",
