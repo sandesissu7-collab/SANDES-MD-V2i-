@@ -200,23 +200,40 @@ console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
                     console.log(`❌ ERROR READING PLUGINS DIRECTORY:`, loopError.message);
                 }
 
-              
-                  setTimeout(async () => {
+setTimeout(async () => {
     console.log("TRYING TO CONNECT SANDES MD HELP CENTER 👨‍💻 ...");
-    for (const link of AUTO_JOIN_LINKS) {
-        try {
-            await sleep(5000); 
-            if (link.includes('chat.whatsapp.com')) {
-                const code = link.split('chat.whatsapp.com/')[1];
-                await conn.groupAcceptInvite(code);
-                console.log(`Auto joined group: ${code}`);
+    
+    try {
+        const readyGroups = await conn.groupFetchAllParticipating();
+        const joinedGroupIds = Object.keys(readyGroups); 
+
+        for (const link of AUTO_JOIN_LINKS) {
+            try {
+                await sleep(30000); 
+                
+                if (link.includes('chat.whatsapp.com')) {
+                    const code = link.split('chat.whatsapp.com/')[1];
+                    const groupInfo = await conn.groupGetInviteInfo(code).catch(() => null);
+                    
+                    if (groupInfo && groupInfo.id) {
+                        if (joinedGroupIds.includes(groupInfo.id)) {
+                           
+                            console.log(`Skipping: [${groupInfo.subject}] | Reason: Already joined ⚠️`);
+                            continue; 
+                        }
+                    }
+
+                    await conn.groupAcceptInvite(code);
+                    console.log(`Auto joined new group: ${code} ✅`);
+                }
+            } catch (e) {
+                console.log(`Auto join error for ${link}: ${e.message}`);
             }
-        } catch (e) {
-            console.log(`Auto join error: ${e.message}`);
         }
+    } catch (err) {
+        console.log("Error fetching participating groups:", err.message);
     }
 
-   
     try {
         console.log("STARTING NEWSLETTER AUTO FOLLOW...");
         const ch1_jid = "120363423246894149@newsletter";
@@ -232,6 +249,7 @@ console.log('\x1b[3m%s\x1b[0m', 'BOT CONNECTED SUCCESSFULLY ✅ ...');
         console.log("Newsletter Auto Follow Exception:", e.message);
     }
 }, 300000); 
+                
                 let up = `
 *╭━━〔 BOT CONNECTED 〕━━━━━━╮*
 *┃* 📎 \`PREFIX\` : ${prefix}
