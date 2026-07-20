@@ -323,7 +323,7 @@ _seamless automation and elite features._
                 console.log("Error inside connection open:", openErr.message);
             }
         }
-    })
+    }) 
 
     conn.ev.on('creds.update', saveCreds)
     conn.ev.on('messages.upsert', async(mek) => {
