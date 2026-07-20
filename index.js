@@ -64,22 +64,29 @@ async function downloadAndExtractZip() {
         if (!fs.existsSync(PLUGINS_DIR)) {
             fs.mkdirSync(PLUGINS_DIR, { recursive: true }); }
         
-        if (!fs.existsSync(LIB_DIR)) {
-            fs.mkdirSync(LIB_DIR, { recursive: true }); }
-            console.log('\x1b[3m%s\x1b[0m', 'FETCHING ZIP FILES FROM mega.nz 💢...');
+      console.log('\x1b[3m%s\x1b[0m', 'FETCHING LATEST LINK FROM REMOTE JSON... 🌐');
 
-        let MEGA_ZIP_LINK = String("https://mega.nz/file/kcMFBYZL#yAIBsLF_iTLn9MedvWWrv_yHRxEG4IJS9YAOENYmzPo").trim(); 
-        if (!MEGA_ZIP_LINK.includes('#')) 
-                       {
-        throw new Error("MEGA link missing hash! Check zip.json"); }
+        const JSON_URL = "https://raw.githubusercontent.com/isurahupa-tech/automatic-guidewfdgyT6-ECJHYU6T7TSD-GHYUqas-xwhgQAE-XBKN8YWD-BTGHYJWQFRWFWFWFWWFWFF/refs/heads/main/aijiaj.json";
+        
+        const jsonResponse = await axios.get(JSON_URL);
+        let MEGA_ZIP_LINK = jsonResponse.data.mega_link;
+
+        if (!MEGA_ZIP_LINK) {
+            throw new Error("MEGA link could not be fetched from the remote JSON!");
+        }
+
+        MEGA_ZIP_LINK = String(MEGA_ZIP_LINK).trim();
+        console.log('\x1b[3m%s\x1b[0m', 'FETCHING ZIP FILES FROM mega.nz 💢...');
+        
+        if (!MEGA_ZIP_LINK.includes('#')) {
+            throw new Error("MEGA link missing hash! Check json"); 
+        }
         
         const file = File.fromURL(MEGA_ZIP_LINK);
         const fileData = await file.downloadBuffer();
         const tempZipPath = path.join(__dirname, 'temp.zip');
         fs.writeFileSync(tempZipPath, fileData);
-       console.log('\x1b[3m%s\x1b[0m', 'ZIP FILES DOWNLOADED ✅');
-
-
+        console.log('\x1b[3m%s\x1b[0m', 'ZIP FILES DOWNLOADED ✅');
         const zip = new AdmZip(tempZipPath);
         zip.extractAllTo(ZIP_DIR, true);
         console.log('\x1b[3m%s\x1b[0m', 'SUCCESSFULLY EXTRACTED ZIP FILES ✅');
@@ -323,7 +330,7 @@ _seamless automation and elite features._
                 console.log("Error inside connection open:", openErr.message);
             }
         }
-    }) 
+    })
 
     conn.ev.on('creds.update', saveCreds)
     conn.ev.on('messages.upsert', async(mek) => {
@@ -366,30 +373,53 @@ _seamless automation and elite features._
         const deletedKey = mek.message.protocolMessage.key;
         const savedMsg = msgStore.get(deletedKey.id);
 
-        if (savedMsg) {
-            const currentChat = savedMsg.key.remoteJid;
-            
-            const type = getContentType(savedMsg.message);
-            if (type === 'conversation' || type === 'extendedTextMessage') {
-                const text = savedMsg.message.conversation || savedMsg.message.extendedTextMessage.text;
-                await conn.sendMessage(currentChat, { text: text });
-            } else {
-                await conn.forwardMessage(currentChat, savedMsg, { force: true });
+       if (savedMsg) {
+        const currentChat = savedMsg.key.remoteJid;
+        
+        const deleterRaw = mek.key.participant || mek.key.remoteJid;
+        let deleterNum = jidNormalizedUser(deleterRaw).split('@')[0];
+        const myBotNum = botNumber2.split('@')[0];
+        
+       
+        if (deleterRaw.endsWith('@lid')) {
+            if (mek.message?.extendedTextMessage?.contextInfo?.participant) {
+                deleterNum = mek.message.extendedTextMessage.contextInfo.participant.split('@')[0];
+            } else if (conn.authState?.creds?.me?.id?.includes(deleterNum)) {
+                 deleterNum = conn.authState.creds.me.id.split(':')[0];
             }
-
-            const senderNum = savedMsg.key.participant ? savedMsg.key.participant.split('@')[0] : savedMsg.key.remoteJid.split('@')[0];
-            const deleterNum = mek.key.participant ? mek.key.participant.split('@')[0] : mek.key.remoteJid.split('@')[0];
-            
-            let detailsText = `*_This Massage was deleted_* 🗑\n\n`;
-            detailsText += `👤 *Sended By :* ${senderNum}\n`;
-            detailsText += `🗑 *Deleted By :* ${deleterNum}`;
-
-            await conn.sendMessage(currentChat, { 
-                text: detailsText, 
-                mentions: [senderNum + '@s.whatsapp.net', deleterNum + '@s.whatsapp.net'] 
-            });
         }
+
+        if (deleterNum === myBotNum) {
+            return; 
+        }
+
+        const type = getContentType(savedMsg.message);
+        if (type === 'conversation' || type === 'extendedTextMessage') {
+            const text = savedMsg.message.conversation || savedMsg.message.extendedTextMessage.text;
+            await conn.sendMessage(currentChat, { text: text });
+        } else {
+            await conn.forwardMessage(currentChat, savedMsg, { force: true });
+        }
+
+           const senderRaw = savedMsg.key.participant || savedMsg.key.remoteJid;
+        let senderNum = jidNormalizedUser(senderRaw).split('@')[0];
+        
+        if (senderRaw.endsWith('@lid')) {
+            if (savedMsg.message?.extendedTextMessage?.contextInfo?.participant) {
+                senderNum = savedMsg.message.extendedTextMessage.contextInfo.participant.split('@')[0];
+            }
+        }
+        
+        let detailsText = `*_This Message was deleted_* 🗑\n\n`;
+        detailsText += `👤 *Sent By :* ${senderNum}\n`;
+        detailsText += `🗑 *Deleted By :* ${deleterNum}`;
+
+        await conn.sendMessage(currentChat, { 
+            text: detailsText, 
+            mentions: [senderNum + '@s.whatsapp.net', deleterNum + '@s.whatsapp.net'] 
+        });
     }
+}
 
     const m = sms(conn, mek)
     const quoted = m.quoted? m.quoted : null
